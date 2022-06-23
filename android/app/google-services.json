@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "457279058464",
+    "project_id": "evrvvinrub",
+    "storage_bucket": "evrvvinrub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457279058464:android:362fd5ccfa8331bea50245",
+        "android_client_info": {
+          "package_name": "com.evcsrc.evscrs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "457279058464-ht9uvanmn8m6eibhv68qh8rml5eajpb6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVwvBcfLotM0JnCR0BAOjfhPXxg5NfvFY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "457279058464-ht9uvanmn8m6eibhv68qh8rml5eajpb6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
