@@ -28,37 +28,49 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: emailControl,
-          enableSuggestions: false,
-          keyboardType: TextInputType.emailAddress,
-          autocorrect: false,
-          decoration: const InputDecoration(hintText: 'Email: abc@example.com'),
-        ),
-        TextField(
-          controller: passControl,
-          obscureText: true,
-          enableSuggestions: false,
-          decoration: const InputDecoration(hintText: 'Password'),
-        ),
-        TextButton(
-          onPressed: () async {
-            final email = emailControl.text;
-            final password = passControl.text;
-            try {
-              final userCredentail = await FirebaseAuth.instance
-                  .createUserWithEmailAndPassword(
-                      email: email, password: password);
-              print(userCredentail);
-            } on FirebaseAuthException catch (e) {
-              print(e.code);
-            }
-          },
-          child: const Text('Register'),
-        ),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Register here'),
+      ),
+      body: Column(
+        children: [
+          TextField(
+            controller: emailControl,
+            enableSuggestions: false,
+            keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
+            decoration:
+                const InputDecoration(hintText: 'Email: abc@example.com'),
+          ),
+          TextField(
+            controller: passControl,
+            obscureText: true,
+            enableSuggestions: false,
+            decoration: const InputDecoration(hintText: 'Password'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final email = emailControl.text;
+              final password = passControl.text;
+              try {
+                final userCredentail = await FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                        email: email, password: password);
+                print(userCredentail);
+              } on FirebaseAuthException catch (e) {
+                print(e.code);
+              }
+            },
+            child: const Text('Register'),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login/', (route) => false);
+              },
+              child: const Text('< click here to go back'))
+        ],
+      ),
     );
   }
 }
