@@ -54,7 +54,8 @@ class _LoginViewState extends State<LoginView> {
                 final userCredentail = await FirebaseAuth.instance
                     .signInWithEmailAndPassword(
                         email: email, password: password);
-                print(userCredentail);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/evrv/', (route) => false);
               } on FirebaseAuthException catch (e) {
                 print("Something bad happened");
                 print(e.runtimeType);

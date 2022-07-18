@@ -19,6 +19,8 @@ void main() {
     routes: {
       '/login/': (context) => const LoginView(),
       '/register/': (context) => const RegisterView(),
+      '/verify/': (context) => const VerifyEmailView(),
+      '/evrv/': (context) => const Evrv(),
     },
   ));
 }
@@ -50,7 +52,7 @@ class HomePage extends StatelessWidget {
             }
             return const Text('done');
           default:
-            return const Text('Loading..');
+            return const CircularProgressIndicator();
         }
       },
     );
@@ -76,8 +78,17 @@ class _EvrvState extends State<Evrv> {
         title: const Text('EVRV'),
         actions: [
           PopupMenuButton<MenuAction>(
-            onSelected: (value) {
-              print(value);
+            onSelected: (value) async {
+              switch (value) {
+                case MenuAction.logout:
+                  final shouldLogout = await showLogOutDialog(context);
+                  if (shouldLogout) {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/login/', (_) => false);
+                  }
+                  break;
+              }
             },
             itemBuilder: (context) {
               return [
@@ -98,11 +109,49 @@ class _EvrvState extends State<Evrv> {
                 urlTemplate: "https://api.tomtom.com/map/1/tile/basic/main/"
                     "{z}/{x}/{y}.png?key={apiKey}",
                 additionalOptions: {"apiKey": apiKey},
-              )
+              ),
+              new MarkerLayerOptions(
+                markers: [
+                  new Marker(
+                    width: 80.0,
+                    height: 80.0,
+                    point: tomtomHQ,
+                    builder: (BuildContext context) => const Icon(
+                        Icons.location_on,
+                        size: 60.0,
+                        color: Colors.black),
+                  ),
+                ],
+              ),
             ],
           )
         ],
       )),
     );
   }
+}
+
+Future<bool> showLogOutDialog(BuildContext context) {
+  return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('LogOut'),
+          content: const Text('Are you sure you wanna LogOut!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text('LogOut'),
+            )
+          ],
+        );
+      }).then((value) => value ?? false);
 }
