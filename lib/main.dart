@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import "package:flutter_map/flutter_map.dart";
 import 'package:latlong2/latlong.dart';
 import 'firebase_options.dart';
+import "package:http/http.dart" as http;
+import "dart:convert" as convert;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,9 +72,47 @@ class Evrv extends StatefulWidget {
 
 class _EvrvState extends State<Evrv> {
   final String apiKey = "QPJ5jAA5c7FCvLxltXvV5QXKmSdZGuFW";
+  final List<Marker> markers = List.empty(growable: true);
   @override
   Widget build(BuildContext context) {
     final tomtomHQ = new LatLng(52.376372, 4.908066);
+
+    final initialMarker = new Marker(
+      width: 80.0,
+      height: 80.0,
+      point: tomtomHQ,
+      builder: (BuildContext context) => const Icon(
+        Icons.location_on,
+        size: 80.0,
+        color: Colors.red,
+      ),
+    );
+    markers.add(initialMarker);
+
+    getAdresses(value, lat, lon) async {
+      final Map<String, String> queryParameters = {'key': '$apiKey'};
+      queryParameters['lat'] = '$lat';
+      queryParameters['lon'] = '$lon';
+      var response = await http.get(Uri.https(
+          'api.tomtom.com', '/search/2/search/$value.json', queryParameters));
+      var jsonData = convert.jsonDecode(response.body);
+      print('$jsonData');
+      var results = jsonData['results'];
+      for (var element in results) {
+        var position = element['position'];
+        var marker = new Marker(
+            builder: (BuildContext context) => const Icon(
+                  Icons.location_on,
+                  size: 80.0,
+                  color: Colors.green,
+                ),
+            point: new LatLng(position['lat'], position['lon']),
+            width: 50.0,
+            height: 50.0);
+        markers.add(marker);
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('EVRV'),
@@ -111,6 +151,9 @@ class _EvrvState extends State<Evrv> {
                 additionalOptions: {"apiKey": apiKey},
               ),
               new MarkerLayerOptions(
+                markers: markers,
+              ),
+              new MarkerLayerOptions(
                 markers: [
                   new Marker(
                     width: 80.0,
@@ -124,7 +167,16 @@ class _EvrvState extends State<Evrv> {
                 ],
               ),
             ],
-          )
+          ),
+          Container(
+              padding: EdgeInsets.all(10),
+              alignment: Alignment.topRight,
+              child: TextField(
+                onSubmitted: (value) {
+                  print(value);
+                  getAdresses(value, tomtomHQ.latitude, tomtomHQ.longitude);
+                },
+              ))
         ],
       )),
     );
