@@ -104,7 +104,7 @@ class _EvrvState extends State<Evrv> {
             builder: (BuildContext context) => const Icon(
                   Icons.location_on,
                   size: 80.0,
-                  color: Colors.green,
+                  color: Colors.blue,
                 ),
             point: new LatLng(position['lat'], position['lon']),
             width: 50.0,
