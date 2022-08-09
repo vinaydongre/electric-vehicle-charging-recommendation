@@ -6,6 +6,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:evscrs/location_service.dart';
 
 import 'location_service.dart';
+import 'main.dart';
+
+enum MenuAction { home }
 
 class MapSample extends StatefulWidget {
   const MapSample({Key? key}) : super(key: key);
@@ -75,6 +78,20 @@ class MapSampleState extends State<MapSample> {
     return new Scaffold(
       appBar: AppBar(
         title: const Text('Routing'),
+        actions: [
+          PopupMenuButton<MenuAction>(
+            onSelected: (value) async {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/evrv/', (_) => false);
+            },
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem<MenuAction>(
+                    value: MenuAction.home, child: Text('Home')),
+              ];
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

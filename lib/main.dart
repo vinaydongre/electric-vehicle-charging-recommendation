@@ -117,6 +117,9 @@ class _EvrvState extends State<Evrv> {
       var results = jsonData['results'];
       for (var element in results) {
         var position = element['position'];
+        var address = element['address'];
+        var id = element['id'];
+        // ignore: unnecessary_new
         var marker = new Marker(
           //builder: (BuildContext context) => const Icon(
           //      Icons.location_on,
@@ -132,11 +135,10 @@ class _EvrvState extends State<Evrv> {
                   context: context,
                   builder: (context) => AlertDialog(
                         title: Text('Location Update'),
-                        content: Text('latitude' +
-                            lat.toString() +
-                            'longitude' +
-                            lon.toString() +
-                            results[1]['address']['freeformAddress']),
+                        content: Text(position.toString() +
+                            '\n' +
+                            address.toString() +
+                            id.toString()),
                         actions: <Widget>[
                           TextButton(
                             child: Text('OK'),
@@ -147,9 +149,13 @@ class _EvrvState extends State<Evrv> {
                         ],
                       ));
             },
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+            ),
             icon: const Icon(
               Icons.location_on,
-              size: 10.0,
+              size: 14.0,
               color: Colors.blue,
             ),
             label: const Text(''),
