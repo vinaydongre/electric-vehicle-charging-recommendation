@@ -1,18 +1,25 @@
 import 'package:evscrs/login_view.dart';
 import 'package:evscrs/register_view.dart';
+import 'package:evscrs/routing.dart';
 import 'package:evscrs/verify_email_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:flutter_map/flutter_map.dart";
 import 'package:latlong2/latlong.dart';
+import 'package:location/location.dart';
 import 'firebase_options.dart';
 import "package:http/http.dart" as http;
 import "dart:convert" as convert;
+import "package:geolocator/geolocator.dart";
+
+LatLng tomtomHQ = LatLng(30.89, 78.58);
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
+    themeMode: ThemeMode.dark,
     title: 'evrvs',
     theme: ThemeData(
       primarySwatch: Colors.blue,
@@ -23,6 +30,7 @@ void main() {
       '/register/': (context) => const RegisterView(),
       '/verify/': (context) => const VerifyEmailView(),
       '/evrv/': (context) => const Evrv(),
+      '/route/': (context) => const MapSample(),
     },
   ));
 }
@@ -61,7 +69,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-enum MenuAction { logout }
+enum MenuAction { logout, route }
 
 class Evrv extends StatefulWidget {
   const Evrv({Key? key}) : super(key: key);
@@ -73,10 +81,19 @@ class Evrv extends StatefulWidget {
 class _EvrvState extends State<Evrv> {
   final String apiKey = "QPJ5jAA5c7FCvLxltXvV5QXKmSdZGuFW";
   final List<Marker> markers = List.empty(growable: true);
+
   @override
   Widget build(BuildContext context) {
-    final tomtomHQ = new LatLng(52.376372, 4.908066);
+    _getUserLocation() async {
+      Position position =
+          await GeolocatorPlatform.instance.getCurrentPosition();
+      setState(() {
+        tomtomHQ = LatLng(position.latitude, position.longitude);
+        return;
+      });
+    }
 
+    _getUserLocation();
     final initialMarker = new Marker(
       width: 80.0,
       height: 80.0,
@@ -101,14 +118,43 @@ class _EvrvState extends State<Evrv> {
       for (var element in results) {
         var position = element['position'];
         var marker = new Marker(
-            builder: (BuildContext context) => const Icon(
-                  Icons.location_on,
-                  size: 80.0,
-                  color: Colors.blue,
-                ),
-            point: new LatLng(position['lat'], position['lon']),
-            width: 50.0,
-            height: 50.0);
+          //builder: (BuildContext context) => const Icon(
+          //      Icons.location_on,
+          //      size: 80.0,
+          //      color: Colors.blue,
+          //    ),
+          point: new LatLng(position['lat'], position['lon']),
+          width: 50.0,
+          height: 50.0,
+          builder: (BuildContext context) => ElevatedButton.icon(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text('Location Update'),
+                        content: Text('latitude' +
+                            lat.toString() +
+                            'longitude' +
+                            lon.toString() +
+                            results[1]['address']['freeformAddress']),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ));
+            },
+            icon: const Icon(
+              Icons.location_on,
+              size: 10.0,
+              color: Colors.blue,
+            ),
+            label: const Text(''),
+          ),
+        );
         markers.add(marker);
       }
     }
@@ -128,12 +174,18 @@ class _EvrvState extends State<Evrv> {
                         .pushNamedAndRemoveUntil('/login/', (_) => false);
                   }
                   break;
+                case MenuAction.route:
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/route/', (_) => false);
+                  break;
               }
             },
             itemBuilder: (context) {
               return [
                 const PopupMenuItem<MenuAction>(
-                    value: MenuAction.logout, child: Text('Logout'))
+                    value: MenuAction.route, child: Text('Route')),
+                const PopupMenuItem<MenuAction>(
+                    value: MenuAction.logout, child: Text('Logout')),
               ];
             },
           ),

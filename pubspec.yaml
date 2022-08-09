@@ -27,10 +27,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-
+  geolocator:  ^9.0.1
   flutter_map: ^1.1.1
   http: ^0.13.4
-
+  location: ^4.2.0
+  
   flutter:
     sdk: flutter
 
@@ -43,6 +44,8 @@ dependencies:
   firebase_analytics: ^9.1.10
   cloud_firestore: ^3.1.18
   latlong: ^0.6.1
+  flutter_polyline_points: ^1.0.0
+  google_maps_flutter: ^2.1.10
 
   
 
